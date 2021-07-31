@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  path: MyString
+  verb: MyString
+  response_code: 1
+  body: MyString
+
+two:
+  path: MyString
+  verb: MyString
+  response_code: 1
+  body: MyString
