@@ -1,16 +1,13 @@
 class EndpointsController < ApplicationController
   def index
     @endpoints = Endpoint.all
-    render json: @endpoints
+    render json: serialized_endpoint(@endpoints)
   end
 
   def create
-    puts "################################"
-    puts endpoint_params
-    puts "################################"
     @endpoint = Endpoint.new(endpoint_params)
     if @endpoint.save
-      render json: @endpoint
+      render json: serialized_endpoint(@endpoint), status: :created, location: complete_endpoint_path
     else
       render json: { message: 'Work in progress'}, status: 200
     end
@@ -38,15 +35,30 @@ class EndpointsController < ApplicationController
 
   protected
 
+  def serialized_endpoint endpoints
+    if endpoints.many?
+      data = endpoints.map do |endpoint|
+        endpoint_hash endpoint
+      end
+    else
+      data = endpoint_hash endpoints
+    end
+    { :data => data }
+  end
+
+  def endpoint_hash endpoint
+    JSONAPI::ResourceSerializer.new(EndpointResource).object_hash(EndpointResource.new(endpoint, nil), nil)
+  end
+
   def endpoint_params
-    # puts params
-    puts params.as_json
-    # params.require(:data).require(:type).permit(:type, { attributes: [:verb, :path, { response: [:code, :body] }]})
   endpoint_data = params.require(:data).require(:attributes).permit(:verb, :path, { response: [:code, :body, :headers => {} ]})
-  puts "***************************"
-  puts endpoint_data
-  puts "***************************"
   {path: endpoint_data[:path], verb: endpoint_data[:verb], response_code: endpoint_data[:response][:code], body: endpoint_data[:response][:body], headers: endpoint_data[:response][:headers]
     }    
+  end
+
+  private
+  
+  def complete_endpoint_path
+    request.protocol + request.host + ":" + request.port.to_s + @endpoint.path
   end
 end
