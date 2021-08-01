@@ -1,7 +1,7 @@
 class EndpointsController < ApplicationController
   def index
     @endpoints = Endpoint.all
-    render json: serialized_endpoint(@endpoints)
+    render json: serialized_endpoint(@endpoints.to_a)
   end
 
   def create
@@ -9,17 +9,16 @@ class EndpointsController < ApplicationController
     if @endpoint.save
       render json: serialized_endpoint(@endpoint), status: :created, location: complete_endpoint_path
     else
-      render json: { message: 'Work in progress'}, status: 200
+      render json: @endpoint.errors, status: :bad_request
     end
   end
   
   def update
     @endpoint = Endpoint.find(params[:id])
-    if @endpoint
-      @endpoint.update(endpoint_params)
-      render json: { message: "Endpoint updated successfully"}, status: 200
+    if @endpoint && @endpoint.update(endpoint_params)
+      render json: serialized_endpoint(@endpoint), status: :ok, location: complete_endpoint_path
     else
-      render json: { error: 'Unable to update user.' }, status: 400
+      render json: @endpoint.errors, status: :bad_request
     end
   end
 
@@ -27,16 +26,16 @@ class EndpointsController < ApplicationController
     @endpoint = Endpoint.find_by_id(params[:id])
     if @endpoint
       @endpoint.destroy
-      render json: { message: 'Endpoint deleted' }, status: 200
+      render json: { message: 'Endpoint deleted' }, status: :ok
     else
-      render json: { error: 'no endpoint found'}, status: 404
+      render json: { error: 'no endpoint found'}, status: :not_found
     end
   end
 
   protected
 
   def serialized_endpoint endpoints
-    if endpoints.many?
+    if endpoints.kind_of?(Array)
       data = endpoints.map do |endpoint|
         endpoint_hash endpoint
       end
