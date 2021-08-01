@@ -32,17 +32,6 @@ class EndpointsController < ApplicationController
     end
   end
 
-  def handle
-    @endpoint = Endpoint.find_by verb: request.method, path: requested_path
-    if @endpoint.present?
-      @endpoint.headers.each do |header_key, header_value|
-        response[header_key] = header_value
-      end
-      render json: serialized_endpoint(@endpoint), status: @endpoint[:response_code]
-    else
-      render json: { code: "not found", "details": "Requested page " + requested_path + " does not exist"}, status: :not_found
-    end
-  end
 
   protected
 
@@ -73,7 +62,4 @@ class EndpointsController < ApplicationController
     request.protocol + request.host + ":" + request.port.to_s + @endpoint.path
   end
 
-  def requested_path
-    "/" + params[:path]
-  end
 end

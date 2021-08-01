@@ -1,13 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  path: MyString
-  verb: MyString
-  response_code: 1
-  body: MyString
+  path: /hello-world
+  verb: GET
+  response_code: 200
+  body: '{"message": "Hello world"}'
+  headers: '{"xxx-xxx-xxx": "yyy-yyy-yyy"}'
 
 two:
-  path: MyString
-  verb: MyString
-  response_code: 1
-  body: MyString
+  path: /hello
+  verb: GET
+  response_code: 200
+  body: '{"message": "Hello world"}'
+  headers: '{"xxx-xxx-xxx": "yyy-yyy-yyy"}'
