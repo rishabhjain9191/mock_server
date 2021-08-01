@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_31_115243) do
+ActiveRecord::Schema.define(version: 2021_08_01_011035) do
 
   create_table "endpoints", force: :cascade do |t|
     t.string "path"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2021_07_31_115243) do
     t.string "body"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "headers"
   end
 
 end
