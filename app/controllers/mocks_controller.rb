@@ -7,11 +7,14 @@ class MocksController < ApplicationController
       end
       render json: @endpoint.body, status: @endpoint[:response_code]
     else
-      render json: { code: "not found", "details": "Requested page " + requested_path + " does not exist"}, status: :not_found
+      render json: { code: 'not found', "details": 'Requested page ' + requested_path + ' does not exist' },
+             status: :not_found
     end
   end
+
   private
+
   def requested_path
-    "/" + params[:path]
+    '/' + params[:path]
   end
 end

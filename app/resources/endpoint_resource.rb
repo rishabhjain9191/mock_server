@@ -5,7 +5,7 @@ class EndpointResource < JSONAPI::Resource
   exclude_links [:self]
 
   def response
-    {code: @model.response_code, body: @model.body, headers: @model.headers}
+    { code: @model.response_code, body: @model.body, headers: @model.headers }
   end
 
   def fetchable_fields
