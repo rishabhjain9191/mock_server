@@ -46,10 +46,13 @@ class EndpointsController < ApplicationController
     { data: data }
   end
 
+  # convert endpoint record to JSON:API format
+  # For example: { data: { id, attributes: {}}}
   def endpoint_hash(endpoint)
     JSONAPI::ResourceSerializer.new(EndpointResource).object_hash(EndpointResource.new(endpoint, nil), nil)
   end
 
+  # Extract out the params from JSON:API format. TODO: Automate this process with resources
   def endpoint_params
     endpoint_data = params.require(:data).require(:attributes).permit(:verb, :path,
                                                                       { response: [:code, :body, { headers: {} }] })

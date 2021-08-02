@@ -10,6 +10,7 @@ Echo Server gives the capability to mock your apis and continue with your work w
 - Update preexisting end point
 - Delete an endpoint
 - See the list of currently registered endpoints
+- ** Access the resgistered endpoints as per your definition while registering**
 
 > **Note:** These APIs follows JSON:API v1 standard.
 
