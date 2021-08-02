@@ -1,4 +1,5 @@
 class EndpointsController < ApplicationController
+  before_action :validate_params, only: :update
   def index
     @endpoints = Endpoint.all
     render json: serialized_endpoint(@endpoints.to_a)
@@ -9,7 +10,7 @@ class EndpointsController < ApplicationController
     if @endpoint.save
       render json: serialized_endpoint(@endpoint), status: :created, location: complete_endpoint_path
     else
-      render json: @endpoint.errors, status: :bad_request
+      render json: @endpoint.errors, status: :unprocessable_entity
     end
   end
   
@@ -18,7 +19,7 @@ class EndpointsController < ApplicationController
     if @endpoint && @endpoint.update(endpoint_params)
       render json: serialized_endpoint(@endpoint), status: :ok, location: complete_endpoint_path
     else
-      render json: @endpoint.errors, status: :bad_request
+      render json: @endpoint.errors, status: :unprocessable_entity
     end
   end
 
@@ -54,6 +55,25 @@ class EndpointsController < ApplicationController
   endpoint_data = params.require(:data).require(:attributes).permit(:verb, :path, { response: [:code, :body, :headers => {} ]})
   {path: endpoint_data[:path], verb: endpoint_data[:verb], response_code: endpoint_data[:response][:code], body: endpoint_data[:response][:body], headers: endpoint_data[:response][:headers]
     }    
+  end
+
+  # TODO: Check out the way to de-duplicate this logic with the model
+  # one extra level of validation at controller level
+  def validate_params
+    data = endpoint_params
+    errors = []
+    if %W(GET POST PATCH DELETE).exclude?(data[:verb])    
+      errors << "Invalid verb"
+    end
+    # check for valid url
+    begin
+      URI.parse data[:path]
+    rescue URI::InvalidURIError => exception
+      errors << "Invalid Path"
+    end
+    if errors.present?
+      render json: { errors: errors }, status: :unprocessable_entity
+    end
   end
 
   private
