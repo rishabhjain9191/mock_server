@@ -1,6 +1,6 @@
 class MocksController < ApplicationController
   def handle
-    @endpoint = Endpoint.find_by verb: request.method, path: requested_path
+    @endpoint = Endpoint.fetch_latest_endpoint(request.method, requested_path)
     if @endpoint.present?
       add_headers
       render json: @endpoint.body, status: @endpoint[:response_code]
